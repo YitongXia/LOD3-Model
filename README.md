@@ -13,7 +13,8 @@ The original [thesis](https://repository.tudelft.nl/islandora/object/uuid%3Aeaff
 ___
 ### Project Structure:
 ![](./figures/workflow.png)
-- `stage 1`: 
+- `stage 1`:
+  - co-planar surface merging
   - data registration model creation
   - data registration, image extraction and rectification
 - `stage 2`:

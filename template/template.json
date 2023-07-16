@@ -1,0 +1,75 @@
+{
+  "type": "CityJSON",
+  "version": "1.0",
+  "CityObjects": {
+    "NL.IMBAG.Pand.0503100000032914-0": {
+      "attributes": {},
+      "geometry": [
+        {
+          "boundaries": [
+
+          ],
+          "lod": 2.2,
+          "semantics": {
+            "surfaces": [
+              {
+                "type": "GroundSurface"
+              },
+              {
+                "type": "RoofSurface"
+              },
+              {
+                "on_footprint_edge": true,
+                "type": "WallSurface"
+              },
+              {
+                "on_footprint_edge": false,
+                "type": "WallSurface"
+              },
+              {
+                "type": "Window"
+              },
+              {
+                "type": "Door"
+              }
+            ],
+            "values": [
+            ]
+          },
+          "type": "MultiSurface"
+        }
+      ],
+      "parents": [
+        "NL.IMBAG.Pand.0503100000032914"
+      ],
+      "type": "BuildingPart"
+    }
+  },
+  "vertices": [],
+  "transform": {
+    "scale": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "translate": [
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "metadata": {
+    "citymodelIdentifier": "3DBAG_v210908_fd2cee53_5910",
+    "datasetPointOfContact": {
+      "address": "Delft University of Technology, The Netherlands",
+      "contactName": "3D Geoinformation Group",
+      "contactType": "organization",
+      "emailAddress": "info@3dbag.nl",
+      "website": "https://3dbag.nl"
+    },
+    "datasetReferenceDate": "2021-09-18",
+    "datasetTitle": "3D BAG: Up-to-date, open 3D building models of the Netherlands Tile 5910",
+    "geographicLocation": "The Netherlands",
+    "referenceSystem": "urn:ogc:def:crs:EPSG::7415"
+  }
+}

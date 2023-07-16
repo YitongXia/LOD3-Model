@@ -7,7 +7,7 @@ np.set_printoptions(suppress=True)
 from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection, Line3DCollection
 from extract_texture import *
-from projection_almere import *
+from perspective_projection import *
 import math
 from surface_merge import *
 from src.layout import *
@@ -1506,15 +1506,15 @@ def LSR(arr):
 if __name__ == '__main__':
 
     """read json template file"""
-    json_template = f'../../visualization/template.json'
+    json_template = f'../../template/template.json'
     with open(json_template, "r") as json_file:
         json_data = json_file.read()
         j = json.loads(json_data)
 
     """read .off file"""
 
-    path = f"../../visualization/almere_walls.off"
-    non_wall_path = f"../../visualization/square_left_bottom.off"
+    path = f"../../template/LOD22_walls.off"
+    non_wall_path = f"../../template/original_LOD22.off"
     vertices = read_mesh_vertex(path)
     faces, colors = read_mesh_faces_1(path)
     print("finish read")
@@ -1526,8 +1526,6 @@ if __name__ == '__main__':
     rectangles, else_polygon = get_off_3Dfootprint(grouped_faces, vertices)
     rect_for_projection = rectangles.copy()
 
-    # draw_rectangles(rectangles)
-
     img_id = '404_0029_00131853.tif'
     img_type = img_id.strip().split("_")[0]
     print(img_type)
@@ -1536,58 +1534,43 @@ if __name__ == '__main__':
     id_count = 0
     img_list = []
 
-
-    # regis_model = registration_model()
-    """after obtaining registration model in four directions:"""
-    for rectangle in rectangles:
-        rect = rectangle.copy()
-
-        new_facede_2d = projection(img_id, rect)
-
-        pts_original.append(np.array(new_facede_2d))
-
-        pts = np.array(new_facede_2d, np.int32)
-
-        img_list.append(name)
-
-        pts_groundtruthlist.append(pts)
-
-        id_count += 1
-
-    # !!! the file route should be changed as well
-
-    image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
-    for rectangle in pts_original:
-        cv2.polylines(image, [rectangle], True, (0, 0, 255), 3)
-    for rectangle in pts_groundtruthlist:
-        cv2.polylines(image, [rectangle], True, (255, 0, 0), 3)
-    cv2.imshow("Image with Rectangles", image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # """get the registration model"""
+    # for rectangle in rectangles:
+    #     rect = rectangle.copy()
+    #
+    #     new_facede_2d = projection(img_id, rect)
+    #
+    #     pts_original.append(np.array(new_facede_2d))
+    #
+    #     pts = np.array(new_facede_2d, np.int32)
+    #
+    #     img_list.append(name)
+    #
+    #     pts_groundtruthlist.append(pts)
+    #
+    #     id_count += 1
+    #
+    # # !!! the file route should be changed as well
+    # image = cv2.imread('../../image/' + img_id)
+    # for rectangle in pts_original:
+    #     cv2.polylines(image, [rectangle], True, (0, 0, 255), 3)
+    # for rectangle in pts_groundtruthlist:
+    #     cv2.polylines(image, [rectangle], True, (255, 0, 0), 3)
+    # cv2.imshow("Image with Rectangles", image)
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
     # """obtain registration model"""
     for rectangle in rectangles:
         rect = rectangle.copy()
-
         new_facede_2d = projection(img_id, rect)
-
-        # new_facede_2d = facade_offset(new_facede_2d, img_id)
-
         pts = np.array(new_facede_2d, np.int32)
-
-        # pts_groundtruthlist.append(pts)
         pts_original.append(pts)
         id_count += 1
 
-    image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
+    image = cv2.imread('../../image/' + img_id)
     for rectangle in pts_original:
         cv2.polylines(image, [rectangle], True, (0, 0, 255), 2)
-    # for rectangle in pts_groundtruthlist:
-    #     cv2.polylines(image, [rectangle], True, (255, 0, 0), 3)
-    # cv2.imwrite(f"../../visualization/403_0027_00133016_post.jpg", image)
-    # cv2.imshow("Image with Rectangles", image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
     clone = image.copy()
     cv2.namedWindow("image")
@@ -1622,7 +1605,7 @@ if __name__ == '__main__':
 
         pts = np.array(new_facede_2d, np.int32)
 
-        name = "../../post/calibration_" + img_id.strip().split(".")[0] + "_" + str(id_count) + ".jpg"
+        name = "../../texture/texture_" + img_id.strip().split(".")[0] + "_" + str(id_count) + ".jpg"
         img_list.append(name)
         pts_groundtruthlist.append(pts)
 
@@ -1630,7 +1613,7 @@ if __name__ == '__main__':
 
         id_count += 1
 
-    image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
+    image = cv2.imread('../../image/' + img_id)
     # for rectangle in pts_original:
     #     cv2.polylines(image, [rectangle], True, (0, 0, 255), 5)
     for rectangle in pts_groundtruthlist:
@@ -1639,7 +1622,7 @@ if __name__ == '__main__':
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-    with open('../../visualization/registration.txt', 'w') as f:
+    with open('../../result/registration.txt', 'w') as f:
         f.write(f'{img_type} {slope_x} {intercept_x} {slope_y} {intercept_y}\n')
 
 

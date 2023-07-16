@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.cluster import DBSCAN, KMeans, AgglomerativeClustering
 import matplotlib.pyplot as plt
 from src.stage_1.building_determination import *
-from src.stage_1.projection_almere import *
+from src.stage_1.perspective_projection import *
 import cv2
 
 def compute_distance(point1, point2):

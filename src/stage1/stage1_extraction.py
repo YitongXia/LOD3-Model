@@ -4,13 +4,12 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 np.set_printoptions(suppress=True)
-from mpl_toolkits.mplot3d import Axes3D
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection, Line3DCollection
 from extract_texture import *
-from projection_almere import *
+from perspective_projection import *
 import math
 from surface_merge import *
-from src.layout import *
+from layout import *
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import r2_score
 from matplotlib.font_manager import FontProperties
@@ -18,10 +17,10 @@ from integration import *
 from PIL import Image
 from scipy import stats
 
+
 """
 return facade list (Wallsurface) [[[point1],[point2],[point3],[point4]],[...],[....]] with real coordinates in certain LOD
 """
-
 
 def get_facades_list(j, id, lod):
     """
@@ -1505,15 +1504,15 @@ def LSR(arr):
 if __name__ == '__main__':
 
     """read json template file"""
-    json_template = f'../../visualization/template.json'
+    json_template = f'../../template/template.json'
     with open(json_template, "r") as json_file:
         json_data = json_file.read()
         j = json.loads(json_data)
 
     """read .off file"""
 
-    path = f"../../visualization/almere_walls.off"
-    non_wall_path = f"../../visualization/square_left_bottom.off"
+    path = f"../../template/LOD22_walls.off"
+    non_wall_path = f"../../template/original_LOD22.off"
     vertices = read_mesh_vertex(path)
     faces, colors = read_mesh_faces_1(path)
     print("finish read")
@@ -1547,136 +1546,24 @@ if __name__ == '__main__':
 
         pts = np.array(facade_offset(new_facede_2d, img_id, regis_model), np.int32)
 
-        name = "../../test/cali_" + img_id.strip().split(".")[0] + "_" + str(id_count) + ".jpg"
+        name = "../../texture/texture_" + img_id.strip().split(".")[0] + "_" + str(id_count) + ".jpg"
         img_list.append(name)
 
         pts_groundtruthlist.append(pts)
 
-        #perspective(img_id, rectangle, pts, name)
+        perspective(img_id, rectangle, pts, name)
 
         id_count += 1
 
     #
-    image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
+    image = cv2.imread(f'../../image/' + img_id)
     for rectangle in pts_original:
         cv2.polylines(image, [rectangle], True, (0, 0, 255), 3)
     for rectangle in pts_groundtruthlist:
         cv2.polylines(image, [rectangle], True, (255, 0, 0), 3)
-    cv2.imwrite(f"../../../projection_effect.jpg", image)
+
     cv2.imshow("Image with Rectangles", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    print("finish clipping")
+    print("finish clipping the individual facade texture image")
 
-    # """obtain registration model"""
-    # for rectangle in rectangles:
-    #     rect = rectangle.copy()
-    #
-    #     new_facede_2d = projection(img_id, rect)
-    #
-    #     # new_facede_2d = facade_offset(new_facede_2d, img_id)
-    #
-    #     pts = np.array(new_facede_2d, np.int32)
-    #
-    #     # pts_groundtruthlist.append(pts)
-    #     pts_original.append(pts)
-    #     id_count += 1
-    #
-    # image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
-    # for rectangle in pts_original:
-    #     cv2.polylines(image, [rectangle], True, (0, 0, 255), 2)
-    # # for rectangle in pts_groundtruthlist:
-    # #     cv2.polylines(image, [rectangle], True, (255, 0, 0), 3)
-    # # cv2.imwrite(f"../../visualization/403_0027_00133016_post.jpg", image)
-    # # cv2.imshow("Image with Rectangles", image)
-    # # cv2.waitKey(0)
-    # # cv2.destroyAllWindows()
-    #
-    # clone = image.copy()
-    # cv2.namedWindow("image")
-    # cv2.setMouseCallback("image", draw_rectangle)
-    #
-    # while True:
-    #     cv2.imshow("image", image)
-    #     key = cv2.waitKey(1) & 0xFF
-    #
-    #     if key == ord("r"):
-    #         print("let's reselect ROI")
-    #         image = clone.copy()
-    #         points = []
-    #
-    #     elif key == ord("c"):
-    #         print("end selecting")
-    #         break
-    #
-    # cv2.destroyAllWindows()
-    # print(f"ROI Points: {roi_points}")  # Print out all stored clicking results
-    # cv2.destroyAllWindows()
-    # slope_x, intercept_x, slope_y, intercept_y = LSR(roi_points)
-    #
-    # for rectangle in rectangles:
-    #     rect = rectangle.copy()
-    #
-    #     new_facede_2d = projection(img_id, rect)
-    #
-    #     pts_original.append(np.array(new_facede_2d))
-    #
-    #     new_facede_2d = registration(new_facede_2d, slope_x, intercept_x, slope_y, intercept_y)
-    #
-    #     pts = np.array(new_facede_2d, np.int32)
-    #
-    #     name = "../../post/calibration_" + img_id.strip().split(".")[0] + "_" + str(id_count) + ".jpg"
-    #     img_list.append(name)
-    #     pts_groundtruthlist.append(pts)
-    #
-    #     # perspective(img_id, rectangle, pts, name)
-    #
-    #     id_count += 1
-    #
-    # image = cv2.imread('/Users/yitongxia/Desktop/pipeline/' + img_id)
-    # # for rectangle in pts_original:
-    # #     cv2.polylines(image, [rectangle], True, (0, 0, 255), 5)
-    # for rectangle in pts_groundtruthlist:
-    #     cv2.polylines(image, [rectangle], True, (255, 0, 0), 5)
-    # # cv2.imwrite(f"../../visualization/403_0027_00133016_post.jpg", image)
-    # cv2.imshow("Image with Rectangles", image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-    #
-    # with open('../../visualization/registration.txt', 'w') as f:
-    #     f.write(f'{img_type} {slope_x} {intercept_x} {slope_y} {intercept_y}\n')
-
-    # """the step to create LOD3 model"""
-    #
-    # cocofile = f'../../import_Almere/almere_json.json'
-    # image_index, window_by_img, d = get_openings(cocofile, rectangles)
-    # # size_regularizations(image_index, window_by_img, d)
-    #
-    # window_by_img = size_regularizations(window_by_img)
-    # d = size_regularizations(d)
-    #
-    # for i in range(len(image_index)):
-    #     parts = image_index[i].strip().split("_")
-    #     img_direction = parts[1]
-    #     rectangle_index = int(parts[4].strip().split(".")[0])
-    #     rectangle = rectangles[rectangle_index]
-    #     img_name = "../../test/ok/" + image_index[i]
-    #     single_3d_windows, new_window_3d, new_door_3d, connecting_wall = integration(rectangle,
-    #                                                                                  window_by_img[i],
-    #                                                                                  d[i], img_name)
-    #     j = output_openings_wall(j, rectangle, single_3d_windows, new_window_3d, new_door_3d, connecting_wall,
-    #                              img_direction)
-    #     # json_object = json.dumps(j, indent=4)
-    #     # with open('another6.json', 'w') as json_file:
-    #     #     json_file.write(json_object)
-    #
-    # filter_result = no_openings_walls(id_count, image_index)
-    # j = write_gap(j, else_polygon, vertices)
-    # j = add_walls(j, filter_result, rectangles)
-    # j = write_non_wall(j, non_wall_surface, vertices)
-    #
-    # json_object = json.dumps(j, indent=4)
-    # with open('/Users/yitongxia/Desktop/pipeline/almere_n.json', 'w') as json_file:
-    #     json_file.write(json_object)
-
-    print("finish")
