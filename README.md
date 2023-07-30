@@ -42,11 +42,6 @@ ___
   - X, Y, Z
 - `a LOD3 CityJSON template file`
 - `openings detection result` (in coco format, automatically generated)
-
-___
-### Description of output files
-`../result/LOD3_model.json`
-
 ___
 ### Required dependencies
 ```angular2html
